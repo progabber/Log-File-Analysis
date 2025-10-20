@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Log File Upload</title>
+    <link rel='stylesheet' href='{{ url_for('static', filename='log_upload.css') }}'>
+</head>
+<body>
+    <div class="left">
+        <h1 align="center">Choose a log file</h1>
+        <form action="/choose_file" method="POST">
+            <select name="chosen_file">
+                {% for file in files %}
+                    <option value="{{ file }}">{{ file }}</option>
+                {% endfor %}
+            </select><br><br>
+            <button type="submit">Choose</button>
+            {% if files %}
+            <p>Uploaded files:</p>
+            {% endif %}
+            <ul>
+            {% for file in files %}
+                <li>{{ file }}</li>
+            {% endfor %}
+            </ul>
+            {% if filename %}
+                <p><strong>Chosen file:</strong> {{ filename }}</p>
+            {% endif %}
+        </form>
+    </div>
+    <div class="right">
+        <h1 align="center">Upload log files</h1>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+              {% for message in messages %}
+              <p style="color: red;" align='center'>{{ message }}</p>
+              {% endfor %}
+          {% endif %}
+        {% endwith %}
+        <div id="dragndrop">
+            <form action="/upload_log" method="POST" enctype="multipart/form-data">
+                <label for="file">Upload files:</label>
+                <input type="file" name="file" id="file" required multiple>
+                <button type="submit">Upload</button>
+            </form>
+        </div>
+        <form action="/set_range/{{ filename }}" method="POST">
+            <p><b>Start:</b><br>
+            <label for="sdate">Day (enter any year if not relevant for logs)</label>
+            <input type="date" name="sdate" id="sdate" value="1900-01-01">
+
+            <label for="stime">Time (enter any millisecond value if not relevant for logs)</label>
+            <input type="time" step="0.001" name="stime" id="stime" value="00:00:00.000">
+            </p>
+
+            <p><b>End:</b><br>
+            <label for="edate">Day (enter any year if not relevant for logs)</label>
+            <input type="date" name="edate" id="edate" value="3000-12-31">
+
+            <label for="etime">Time (enter any millisecond value if not relevant for logs)</label>
+            <input type="time" step="0.001" name="etime" id="etime" value="23:59:59.999">
+            </p>
+
+            <button type="submit">Process the log</button>
+        </form>
+        <center>
+            <a href="/download_log" target="_blank">Download CSV</a>
+            <a href="/display_log" target="_blank">See Table</a>
+            <a href="/graphs" target="_blank">Plot Graphs</a>
+        </center>
+    </div>
+</body>
+</html>
+

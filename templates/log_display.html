@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSV Table</title>
+    <link rel='stylesheet' href='{{ url_for("static", filename="log_display.css") }}'>
+</head>
+<body>
+    <a onclick='go_back()'>Back</a><a align="right" onclick='remove_sort()'>Remove Sort Filter</a><br>
+
+    <h2 style="text-align:center;">CSV Data Table</h2>
+    <table id="table">
+        <thead id="thead">
+            <tr>
+                {% for header in headers %}
+                    <th>{{ header }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody id="tbody">
+            {% for row in rows %}
+                <tr>
+                    {% for cell in row %}
+                        <td>{{ cell }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <script>
+        // back function
+        function go_back(){
+            window.history.back();
+        }
+        // global vars, used for both setting and unsetting
+        let prev_col_ind = null;
+        let prev_cell_val = null;
+
+        // unsetting function
+        function resetFilter() {
+            const table = document.getElementById("table");
+            const rows = table.querySelector('tbody').getElementsByTagName("tr");
+            Array.from(rows).forEach(row => {
+                row.classList.remove("hidden");
+                row.cells[prev_col_ind].classList.remove("highlighted");
+            });
+
+            prev_col_ind = null;
+            prev_cell_val = null;
+        }
+
+        // setting function
+        function filterRows(event) {
+            const tbody = document.getElementById("tbody");
+            const target_elem = event.target;
+
+            if (target_elem.tagName !== 'TD') return;
+
+            const col_ind = target_elem.cellIndex;
+            // trim() is strip() of python
+            const cell_val = target_elem.textContent.trim();
+
+            if (prev_col_ind === col_ind && prev_cell_val === cell_val) {
+                resetFilter();
+                return;
+            }
+
+            const rows = tbody.getElementsByTagName('tr');
+            // gebtn returns not an array, but an <HTMLCollection> which 
+            // can change as elements (not in this case) are changed 
+            // so it is converted to an Array using Array.from(*)
+            const all_rows = Array.from(tbody.getElementsByTagName('tr'));
+
+            all_rows.forEach(row => {
+                const cell = row.cells[col_ind];
+
+                // unset colour of previous column
+                if (prev_col_ind !== null) {
+                    row.cells[prev_col_ind].classList.remove("highlighted");
+                    //row.cells[prev_col_ind].style.backgroundColor = "#f4f4f4";
+                }
+
+                // set colour of this column
+                if (cell && cell.textContent.trim() === cell_val) {
+                    row.classList.remove('hidden');
+                    cell.classList.add("highlighted");
+                    //cell.style.backgroundColor = "#caf1de";
+                }
+                else {
+                    row.classList.add('hidden');
+                }
+            });
+
+            prev_col_ind = col_ind;
+            prev_cell_val = cell_val;
+        }
+        document.getElementById("tbody").addEventListener("click", filterRows);
+
+        const getCellValue = function(tr, index){ return tr.children[index].innerHTML; }
+
+        // returns custom comparator based on index and asc
+        const compare = function(index, asc) {
+        return function(row_1, row_2) { 
+            let value_1 = null;
+            let value_2 = null;
+            if (asc){
+                value_1 = getCellValue(row_1, index);
+                value_2 = getCellValue(row_2, index);
+            }
+            else{
+                // swap value_1 and value_2 for descending order
+                value_1 = getCellValue(row_2, index);
+                value_2 = getCellValue(row_1, index);
+            }
+            if (value_1 !== '' && value_2 !== '' && !isNaN(value_1) && !isNaN(value_2)){
+                // both are numbers
+                return value_1 - value_2;
+            }
+            else{
+                // string comparison using builtin JavaScript function
+                return value_1.toString().localeCompare(value_2);
+            }
+        }
+        };
+
+        // previous table header used to sort
+        let prev_th = null;
+
+        function sortRows(event){
+            const tbody = document.getElementById("tbody");
+            const target_object = event.target;
+
+            // change css of table header
+            if (prev_th !== null){
+                prev_th.classList.remove('highlight');
+            }
+            target_object.classList.add('highlight');
+
+            
+            // update prev_th
+            prev_th = target_object;
+            
+            // toggle order each time sort is called on the column
+            // asc hasn't been defined, takes on default value at first
+            target_object.asc = !target_object.asc;
+
+            column_index = Array.from(target_object.parentNode.children).indexOf(target_object);
+            body_rows = Array.from(tbody.querySelectorAll('tr'));
+            const sortedRows = body_rows.sort(compare(column_index, target_object.asc))
+
+            // appendChild() doesn't mean copying, it means moving
+            sortedRows.forEach(tr => tbody.appendChild(tr));
+            
+        }
+        document.getElementById("thead").addEventListener("click", sortRows);
+
+        function remove_sort(){
+            if (prev_th !== null){
+                prev_th.classList.remove('highlight');
+            }
+            thead = document.getElementById('thead');
+            line_id_cell = thead.querySelector('th');
+            // this will trigger the event listener which will sort acc to line ID
+            line_id_cell.click();
+            if (!line_id_cell.asc) {
+                line_id_cell.click();
+            }
+            // remove highlight of line ID and reset prev_th
+            line_id_cell.classList.remove('highlight');
+            prev_th = null;
+        }
+    </script>
+        
+
+</body>
+</html>
+

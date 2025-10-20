@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Graph Visualisation</title>
+    <link rel='stylesheet' href='{{ url_for('static', filename='graphs.css') }}'>
+</head>
+<body>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+          {% for message in messages %}
+          <p style="color: red;" align="center">{{ message }}</p>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <a onclick="go_back()" class='back'>Back</a><br>
+    <h1 align="center">Check out some graphs!</h1>
+    <form action="/graphs_form" method="POST" enctype="multipart/form-data">
+        <p>Start:
+        <label for="sdate">Day (enter any year if not relevant for logs)</label>
+        <input type="date" name="sdate" id="sdate" value="1900-01-01">
+
+        <label for="stime">Time (enter any millisecond value if not relevant for logs)</label>
+        <input type="time" step="0.001" name="stime" id="stime" value="00:00:00.000">
+        </p>
+
+        <p>End: 
+        <label for="edate">Day (enter any year if not relevant for logs)</label>
+        <input type="date" name="edate" id="edate" value="3000-12-31">
+
+        <label for="etime">Time (enter any millisecond value if not relevant for logs)</label>
+        <input type="time" step="0.001" name="etime" id="etime" value="23:59:59.999">
+        </p>
+
+        <button type="submit">Plot</button>
+    </form>
+
+    {% if file_uploaded %}
+        <center>
+            <img src="{{ url_for('static', filename='line.png') }}" width=50% alt='Line graph'>
+            <br>
+            <a href='/download/line' class='button'>Download</a>
+            <br><br>
+
+            <img src="{{ url_for('static', filename='pie.png') }}" width=50% alt='Pie chart'>
+            <br>
+            <a href='/download/pie' class='button'>Download</a>
+            <br><br>
+
+            <img src="{{ url_for('static', filename='bar.png') }}" width=50% alt='Bar graph'>
+            <br>
+            <a href='/download/bar' class='button'>Download</a>
+        </center>
+    {% endif %}
+
+    <script>
+        // back function
+        function go_back(){
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

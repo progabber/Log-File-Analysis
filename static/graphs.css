@@ -1,0 +1,99 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #444;
+    line-height: 1.5;
+}
+
+h1 {
+    text-align: center;
+    font-size: 40px;
+    color: #444;
+}
+
+/* Form Styling */
+form {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto 50px auto;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+/* so that form fields look separated */
+form p {
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 15px;
+    color: #444;
+}
+
+form input {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0 15px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+}
+
+form button {
+    background-color: #2090F0;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+}
+
+form button:hover {
+    background-color: #1080e0;
+}
+
+img {
+    margin-top: 20px;
+    max-width: 100%;
+    height: auto;
+}
+
+a.back{
+    display: inline-block;
+    background-color: #2090F0;
+    color: white;
+    border: none;
+    text-decoration: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 20px;
+}
+
+a.back:hover {
+    background-color: #1080e0;
+}
+
+a.button {
+    display: inline-block;
+    background-color: #50B050;
+    color: white;
+    padding: 10px 15px;
+    font-size: 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin: 10px;
+}
+
+a.button:hover {
+    background-color: #40a040;
+}
+
